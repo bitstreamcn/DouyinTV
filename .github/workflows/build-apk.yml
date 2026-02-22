@@ -3,34 +3,25 @@ name: Build DouyinTV APK
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: cimg/android:2023.09
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Setup Gradle wrapper
-        run: |
-          # Create gradle wrapper directory
-          mkdir -p gradle/wrapper
-          # Download Gradle wrapper jar from a reliable source
-          curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.2.0/gradle/wrapper/gradle-wrapper.jar
-          chmod +x gradlew
+      - name: Run gradle wrapper
+        run: gradle wrapper --gradle-version 8.2
 
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Build APK
+        run: ./gradlew assembleDebug
 
       - name: Upload Debug APK
         if: success()
@@ -42,16 +33,10 @@ jobs:
 
       - name: Get APK info
         run: |
-          echo "📦 APK Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## APK Build Result" >> $GITHUB_STEP_SUMMARY
           if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-            echo "✅ **Debug APK built successfully!**" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
-            echo "|------|------|" >> $GITHUB_STEP_SUMMARY
-            echo -n "| Debug APK | " >> $GITHUB_STEP_SUMMARY
-            ls -lh app/build/outputs/apk/debug/app-debug.apk | awk '{print $5}' >> $GITHUB_STEP_SUMMARY
-            echo " |" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Build successful!**" >> $GITHUB_STEP_SUMMARY
+            echo "Download from Artifacts below." >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ **Debug APK build failed!**" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Build failed" >> $GITHUB_STEP_SUMMARY
           fi

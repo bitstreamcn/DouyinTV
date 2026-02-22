@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+
+    <!-- 背景 -->
+    <path
+        android:fillColor="#0f3460"
+        android:pathData="M0,0 L320,0 L320,180 L0,180 Z" />
+
+    <!-- 渐变背景 -->
+    <path
+        android:fillColor="#16213e"
+        android:pathData="M0,90 Q160,60 320,90 L320,180 L0,180 Z" />
+
+    <!-- 播放图标 -->
+    <path
+        android:fillColor="#e94560"
+        android:pathData="M140,60 L200,90 L140,120 Z" />
+
+    <!-- 文字占位 -->
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M120,135 L200,135 L200,150 L120,150 Z" />
+</vector>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">抖音电视版</string>
+    <string name="browse_douyin">浏览抖音</string>
+    <string name="play_history">播放记录</string>
+    <string name="direct_play">直接播放</string>
+    <string name="loading">加载中…</string>
+    <string name="error">播放失败</string>
+</resources>

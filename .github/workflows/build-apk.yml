@@ -1,0 +1,58 @@
+name: Build DouyinTV APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DouyinTV-Debug-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DouyinTV-Release-APK
+          path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+
+      - name: Get APK info
+        run: |
+          echo "### 📦 Build Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          echo -n "| Debug APK | " >> $GITHUB_STEP_SUMMARY
+          ls -lh app/build/outputs/apk/debug/app-debug.apk | awk '{print $5}' >> $GITHUB_STEP_SUMMARY
+          echo " |" >> $GITHUB_STEP_SUMMARY
+          echo -n "| Release APK | " >> $GITHUB_STEP_SUMMARY
+          ls -lh app/build/outputs/apk/release/app-release.apk 2>/dev/null && ls -lh app/build/outputs/apk/release/app-release.apk | awk '{print $5}' || echo "N/A" >> $GITHUB_STEP_SUMMARY
+          echo " |" >> $GITHUB_STEP_SUMMARY

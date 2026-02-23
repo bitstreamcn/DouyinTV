@@ -22,19 +22,12 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Display Java version
-        run: java -version
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Display Gradle wrapper config
         run: cat gradle/wrapper/gradle-wrapper.properties
 
-      - name: Run gradle wrapper
-        run: gradle wrapper --gradle-version 8.2
-        timeout-minutes: 10
-        
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Build APK (Debug) - Single attempt
-        run: ./gradlew assembleDebug --stacktrace --info
+      - name: Build APK (Debug)
+        run: ./gradlew assembleDebug --stacktrace
         timeout-minutes: 30

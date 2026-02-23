@@ -8,9 +8,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: cimg/android:2023.09
 
     steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -20,24 +25,16 @@ jobs:
       - name: Display Java version
         run: java -version
 
-      - name: Display Gradle version
-        run: cat gradle/wrapper/gradle-wrapper.properties | grep distributionUrl
-
-      - name: Display Gradle wrapper JAR info
-        run: ls -lh gradle/wrapper/gradle-wrapper.jar && file gradle/wrapper/gradle-wrapper.jar
+      - name: Display Gradle wrapper config
+        run: cat gradle/wrapper/gradle-wrapper.properties
 
       - name: Run gradle wrapper
-        run: gradle wrapper --gradle-version 8.2 || gradle wrapper
+        run: gradle wrapper --gradle-version 8.2
         timeout-minutes: 10
+        
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Display Gradle info
-        run: ./gradlew --version
-        timeout-minutes: 5
-
-      - name: Clean build
-        run: ./gradlew clean
-        timeout-minutes: 5
-
-      - name: Build APK (Debug)
+      - name: Build APK (Debug) - Single attempt
         run: ./gradlew assembleDebug --stacktrace --info
         timeout-minutes: 30

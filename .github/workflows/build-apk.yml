@@ -19,15 +19,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Remove old wrapper
+        run: rm -rf .gradle gradle/wrapper/gradle-wrapper.properties
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      - name: Display Gradle wrapper config
-        run: cat gradle/wrapper/gradle-wrapper.properties
-
-      - name: Build APK (Debug)
-        run: ./gradlew assembleDebug --stacktrace
-        timeout-minutes: 30
+      - name: Gradle Build Action
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper
+          arguments: assembleDebug
+          build-root-directory: .

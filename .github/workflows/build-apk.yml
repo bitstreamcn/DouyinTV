@@ -25,9 +25,36 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Display environment info
+        run: |
+          echo "=== Environment Information ==="
+          java -version
+          echo ""
+          echo "=== System Info ==="
+          uname -a
+          echo ""
+          echo "=== Disk Space ==="
+          df -h
+          echo ""
+          echo "=== Memory Info ==="
+          free -h
+
+      - name: Display Gradle properties
+        run: |
+          echo "=== Gradle Properties ==="
+          cat gradle.properties
+          echo ""
+          echo "=== Gradle Wrapper Properties ==="
+          cat gradle/wrapper/gradle-wrapper.properties
+
       - name: Build APK with Gradle
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --info --stacktrace --no-daemon
         timeout-minutes: 30
+
+      - name: Check build output
+        run: |
+          echo "=== Build Output ==="
+          ls -la app/build/outputs/apk/debug/ || echo "APK directory not found"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -56,3 +83,4 @@ jobs:
           echo "- **Job Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered By**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY

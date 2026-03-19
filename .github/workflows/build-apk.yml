@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main, master ]
   workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Trigger reason'
+        required: false
+        default: 'Manual build'
 
 jobs:
   build:

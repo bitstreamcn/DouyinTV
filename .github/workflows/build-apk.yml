@@ -74,8 +74,10 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build APK with Gradle (Debug mode)
-        run: ./gradlew assembleDebug --info --stacktrace --no-daemon --warning-mode=all
-        timeout-minutes: 45
+        run: ./gradlew assembleDebug --info --stacktrace --no-daemon --warning-mode=all --max-workers=1 --no-parallel
+        env:
+          GRADLE_OPTS: -Xmx4096m -XX:MaxMetaspaceSize=512m
+        timeout-minutes: 60
 
       - name: Check build output
         if: always()
